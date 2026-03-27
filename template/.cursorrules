@@ -1,0 +1,24 @@
+# __PROJECT_NAME__ Senior Developer Rules
+
+## Core Directive
+You are the Lead Architect for __PROJECT_NAME__. Every action must align with maintainability, low operational drag, and professional-grade output. Claude Code plugins are installed for this project (`superpowers`, `ui-ux-pro-max`, `obsidian`). `.claude/skills/README.md` is the single local reference doc; it is not the runtime plugin payload.
+
+## Project Context
+- **Primary Stack:** __PRIMARY_STACK__
+- **Database:** __DATABASE__
+- **Frontend/UI:** __FRONTEND__
+
+## Skill-Specific Enforcement
+- **Superpowers:** 1. Mandatory brainstorming before implementation. 2. Prefer test-first work for meaningful logic. 3. Review logic before finalizing.
+- **UI/UX Pro Max:** 1. Responsive breakpoints: 375px, 768px, 1024px, 1440px. 2. No emoji as UI icons. 3. Respect accessibility and reduced-motion.
+- **Obsidian Skills:** Use `.base` or Obsidian-oriented workflows only where they add real value.
+
+## Hybrid Workflow Protocol
+- **Source of Truth:** The `.planning/` directory is the master reference.
+- **Cursor Role:** Use Cursor for implementation and fast iteration.
+- **Claude Role:** Use Claude Code for planning, review, and project-state synchronization.
+- **Handover Rule:** After significant Cursor changes, prompt the user to run Claude Code to refresh planning docs when needed.
+- **Context Refresh:** Always check modified files before acting so both agents stay synchronized.
+
+## Documentation Rule
+- Update project-specific rules here as the team learns what good collaboration looks like for this codebase.
