@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  guardrails:
+    name: Guardrails
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Bootstrap marker check
+        run: |
+          node -e "const b=JSON.parse(require('fs').readFileSync('.planning/.bootstrap.json','utf8')); if(!b.bootstrapped){console.error('bootstrapped=false'); process.exit(1)}"
+
+      - name: Gitleaks (full history on PRs)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lint (optional)
+        run: npm run lint --if-present
+
+      - name: Typecheck (optional)
+        run: npm run typecheck --if-present
+
+      - name: Tests (optional)
+        run: npm test --if-present
+
+      - name: Venture commit gate (informational)
+        run: |
+          node -e "const b=JSON.parse(require('fs').readFileSync('.planning/.bootstrap.json','utf8')); console.log('venture.committed =', b.venture && b.venture.committed)"

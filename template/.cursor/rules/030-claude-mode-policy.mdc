@@ -1,0 +1,41 @@
+---
+description: Mode and surface policy for Cursor and Claude Code, codifying the DataCamp guide.
+alwaysApply: true
+---
+
+# Rule 030 - Mode Policy
+
+## Default stance
+
+Start new tasks in **Plan mode** (Cursor Plan mode OR Claude Code `plan` mode). Only drop to lower-supervision modes after a checkpoint was taken.
+
+## Decision matrix
+
+| Situation | Surface | Mode | Model |
+|---|---|---|---|
+| Explore unfamiliar area | Cursor Ask | ask | Sonnet 4.6 or Auto |
+| Multi-file change | Cursor Plan -> Claude CLI | plan | Sonnet 4.6 |
+| Single-line fix | Cursor Agent | default | Auto |
+| Rename / migration | Claude CLI | plan | Opus 4.6 |
+| UI polish | Cursor Agent | default | Composer 2 |
+| Debug an error | Claude CLI | default, then plan if scope grows | Sonnet 4.6 |
+| Long autonomous run | Claude CLI in worktree | plan, then auto | Sonnet 4.6 |
+| Generate tests | Claude CLI | plan | Sonnet 4.6 |
+| Sensitive refactor | Claude CLI after checkpoint | acceptEdits | Opus 4.6 |
+| PR review | Claude CLI | default | Sonnet 4.6 |
+
+## Forbidden
+
+- `bypassPermissions` outside a sandbox with no internet.
+- `auto` mode on the main working tree.
+- Running Cursor Agent and Claude Code on the same file simultaneously.
+
+## Checkpoints
+
+Take a checkpoint before:
+
+- any `/execute` run
+- dropping from `plan` to `acceptEdits` or `auto`
+- any rename / migration
+
+Name the checkpoint with the phase and task id.

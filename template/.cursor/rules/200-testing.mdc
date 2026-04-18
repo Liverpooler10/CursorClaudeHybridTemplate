@@ -1,0 +1,41 @@
+---
+description: Testing conventions. Loaded only when editing tests.
+globs: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "tests/**", "e2e/**"]
+---
+
+# Rule 200 - Testing
+
+## Layers
+
+- **Unit** - pure logic. Vitest. Co-located next to the module.
+- **Integration** - crossing module boundaries, with `msw` for network. Under `tests/integration/`.
+- **E2E** - critical user flows. Playwright. Under `e2e/`.
+
+## Priorities
+
+1. Every bug fix ships with a regression test.
+2. Every new use-case ships with at least one integration test.
+3. E2E covers only the top 3-5 flows.
+
+## Anti-patterns
+
+- Snapshot tests that lock rendering details. Prefer role-based queries.
+- Mocking your own code. Mock the boundary, not the logic.
+- `test.only` / `.skip` in committed code.
+- Sleeping in tests. Use deterministic waits.
+
+## TDD loop (suggested)
+
+1. Write the failing test in `plan` mode.
+2. Confirm it fails.
+3. Implement the smallest change to pass.
+4. Refactor with tests green.
+5. Commit with `test:` + `feat:` as separate commits when possible.
+
+## Next recommended
+
+```
+Surface : Claude Code CLI
+Mode    : plan
+Model   : Claude Sonnet 4.6
+```

@@ -1,0 +1,30 @@
+---
+description: Bootstrap guard. Refuse any work until the template bootstrap has completed.
+alwaysApply: true
+---
+
+# Rule 000 - Bootstrap Guard
+
+Before doing ANY task, read [.planning/.bootstrap.json](mdc:.planning/.bootstrap.json).
+
+If `bootstrapped === false`:
+
+1. STOP all work.
+2. Do NOT create a `.cursorrules` of your own.
+3. Do NOT scaffold any code, config, or framework.
+4. Instruct the user to run:
+   - `npm create cursor-claude-hybrid@latest .` (inside this directory, with `--force` if needed)
+   - OR `npm run bootstrap` if the template is already cloned.
+5. Re-read `.planning/.bootstrap.json` after the user confirms the command ran.
+
+If `bootstrapped === true`, proceed to Rule 005 (venture gate) before any other action.
+
+## Rationale
+
+This project uses the Cursor + Claude Code hybrid template. The template has self-enforcing rules, security hooks, and a mandatory Company-of-One discovery gate. Bypassing the bootstrap leaves the project without those guardrails and silently reintroduces the problems the template was designed to prevent.
+
+## Next recommended
+
+- Surface: Terminal (Cursor integrated)
+- Model: n/a (this is a shell command)
+- Action: `npm run bootstrap`

@@ -1,0 +1,17 @@
+{
+  "bootstrapped": false,
+  "bootstrappedAt": null,
+  "templateVersion": "__TEMPLATE_VERSION__",
+  "projectName": "__PROJECT_NAME__",
+  "primaryStack": "__PRIMARY_STACK__",
+  "database": "__DATABASE__",
+  "frontend": "__FRONTEND__",
+  "venture": {
+    "committed": false,
+    "committedAt": null,
+    "chosenOpportunity": null,
+    "commitmentAdr": null
+  },
+  "currentPhase": null,
+  "taskOwner": null
+}

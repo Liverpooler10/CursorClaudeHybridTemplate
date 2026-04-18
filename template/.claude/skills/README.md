@@ -1,42 +1,26 @@
-# Claude Skills And Plugins
+# Claude Skills and Plugins
 
-This project uses Claude Code plugins installed at project scope.
+This folder is reference documentation only. Runtime integration comes from plugins declared in `.claude/settings.json`. Project conventions live in `AGENTS.md`.
 
-## Installed Plugins
+## Installed plugins (project scope)
 
-- `superpowers@claude-plugins-official`
-- `ui-ux-pro-max@ui-ux-pro-max-skill`
-- `obsidian@obsidian-skills`
+- `superpowers@claude-plugins-official` - engineering workflow, brainstorming-first, TDD, review discipline
+- `ui-ux-pro-max@ui-ux-pro-max-skill` - responsive breakpoints, accessibility, visual QA guidance
+- `obsidian@obsidian-skills` - `.base` / Obsidian-oriented content conventions when needed
 
-These plugins are the authoritative runtime integration for Claude Code in this project.
-
-## What This Folder Is For
-
-This folder contains local reference documentation only.
-
-It exists to document:
-
-- which Claude plugins are installed for this project
-- which workflow expectations apply to this project
-- which external references are informational only
-
-## Important Clarification
-
-The files in this folder are not the actual Claude runtime payload.
-Claude Code uses the installed plugins declared in `.claude/settings.json`.
-
-## External References
-
-- `superpowers`: engineering workflow, brainstorming-first, TDD, review discipline
-- `ui-ux-pro-max`: responsive breakpoints, accessibility, visual QA guidance
-- `obsidian-skills`: `.base` / Obsidian-oriented content conventions when needed
-- `awesome-claude-code`: useful reference index, not an installable plugin
-
-## Maintenance
-
-To verify the current Claude plugin state, run:
+Verify:
 
 ```bash
 claude plugins list
 claude plugins marketplace list
 ```
+
+## External references (not installable plugins)
+
+- `awesome-claude-code` - curated index only
+
+## When to use which
+
+- Superpowers: pre-implementation planning, adversarial review, test discipline.
+- UI/UX Pro Max: any frontend polish phase.
+- Obsidian skills: anything targeting `.base` or Obsidian-style markdown flows.

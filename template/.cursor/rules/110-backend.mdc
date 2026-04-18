@@ -1,0 +1,41 @@
+---
+description: Backend conventions. Loaded only when editing backend files.
+globs: ["server/**", "api/**", "prisma/**", "db/**", "**/*.controller.ts", "**/*.service.ts", "**/*.repository.ts"]
+---
+
+# Rule 110 - Backend
+
+## Boundaries
+
+- Domain types live under `modules/<feature>/domain/`.
+- Application use-cases under `modules/<feature>/application/`.
+- Infrastructure (DB, HTTP, queue) under `modules/<feature>/infrastructure/`.
+- UI-facing code never imports from `infrastructure/` directly; it goes via `application/`.
+
+## Validation
+
+- Every external input has a schema (Zod / valibot / ajv).
+- Reject early, reject loudly, log the correlation id.
+
+## Errors
+
+- Domain errors are typed. HTTP errors live at the boundary.
+- Never swallow errors. `catch { /* ignore */ }` requires a comment justifying why.
+
+## Data
+
+- Migrations are forward-only. Rollbacks are ADR-triggered.
+- Seed scripts are idempotent.
+- No raw SQL outside `repository/` layer.
+
+## Observability
+
+- Structured logs (JSON), one event per meaningful state change.
+- Correlation id on every request, propagated through async work.
+
+## Security
+
+- Input validation at the boundary.
+- Output encoding at the boundary.
+- No PII in logs.
+- Secrets only via env, never hardcoded.

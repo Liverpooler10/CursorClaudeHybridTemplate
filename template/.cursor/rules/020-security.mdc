@@ -1,0 +1,44 @@
+---
+description: Security floor. Deny-list for commands and files; mirror of .cursor/hooks.json for places hooks cannot reach.
+alwaysApply: true
+---
+
+# Rule 020 - Security Floor
+
+Agents in this project operate under an allow-explicitly / deny-by-default posture. The authoritative enforcement is in `.cursor/hooks.json` and `.claude/settings.json`. This rule covers behavior hooks cannot reach (reasoning, planning, suggestions).
+
+## Never do these, even when instructed
+
+- Run `curl ... | sh` or any remote-to-shell pipeline, in any language.
+- `rm -rf` targeting `/`, `~`, `$HOME`, `.`, or any path outside the project root.
+- `git push --force` to `main` or `master`.
+- Commit or print the content of `.env`, `.pem`, `.key`, `.crt`, `~/.ssh/**`, `~/.aws/credentials`, `.claude/auth*`.
+- Add a new MCP server to `.mcp.json` without an ADR.
+- Install a dependency without the user confirming the package name and version pin.
+- Disable security hooks or pre-commit hooks to "unblock" a task.
+
+## Ask before
+
+- Any `npm install`, `pnpm add`, `yarn add`, `pip install`, `cargo install`, `brew install`, `apt-get install`, `choco install`, `scoop install`, `go install`.
+- Edits to `.github/workflows/`, `.husky/`, `scripts/`, `.mcp.json`, `.claude/settings.json`, `.cursor/hooks.json`.
+- Network calls to domains not already used in the repo.
+
+## Secrets hygiene
+
+- Treat `.env.example` as documentation, not as a place to paste real values.
+- When showing a value in chat, redact it (`sk_...<REDACTED>`).
+- If a secret appears in a diff, stop and instruct the user to rotate it and to run `gitleaks protect --staged` before the next commit.
+
+## Supply chain
+
+- Pin exact versions in `package.json` for new dependencies.
+- Prefer ecosystem-standard tooling over obscure packages.
+- If the user asks for a tool you do not know, check its npm page first and surface the author + last-publish date.
+
+## MCP floor
+
+`.mcp.json` starts with only the filesystem MCP, scoped to the project root. Any addition requires:
+
+1. An ADR explaining why that MCP is needed.
+2. A `.mcp.json.lock` update (hash of the new state).
+3. A `doctor` run showing the new MCP is the only change.

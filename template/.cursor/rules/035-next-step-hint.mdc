@@ -1,0 +1,46 @@
+---
+description: After every response, emit the next-recommended surface/mode/model block. No exceptions for "trivial" answers.
+alwaysApply: true
+---
+
+# Rule 035 - Next-Step Hint (mandatory footer)
+
+**Every single response MUST end with the fenced block below.** No exceptions for length, "triviality", or mode. The user always needs to know where to continue.
+
+```
+Next recommended
+----------------
+Surface : <Cursor Agent | Cursor Ask | Cursor Plan | Claude Code CLI | Claude Code Extension>
+Mode    : <plan | default | acceptEdits | auto | ask>
+Model   : <Claude Sonnet 4.6 | Claude Opus 4.6 | Composer 2 | Cursor Auto>
+Why     : <one line, <= 120 chars, pointing to MODE-GUIDE.md or the current phase>
+```
+
+The block goes at the very end of the response. No prose after it.
+
+## How to pick values
+
+1. Check `.planning/.bootstrap.json`:
+   - `bootstrapped === false` -> Surface: Terminal, Mode: n/a, Model: n/a, Why: "run npm run bootstrap"
+   - `venture.committed === false` -> See `.planning/VENTURE/README.md` and emit the block from the current VENTURE file.
+2. Otherwise consult `.planning/MODE-GUIDE.md` -> pick the row whose "Situation" best matches what was just done or what comes next.
+3. When in doubt: `Cursor Plan mode` + `Claude Sonnet 4.6` + "re-evaluate after reading STATE.md".
+
+## The only two cases where the block may be omitted
+
+1. The response is a pure permission-denial ("I cannot do that because…") and no partial work was done.
+2. The response is a raw list of options waiting for the user to choose (e.g. "Which of these 3 approaches do you want?") — add the block after the user answers.
+
+Anything else — answers to questions, explanations, plans, partial work, error messages, summaries — all include the block.
+
+## Reasoning this rule exists
+
+Two AI agents (Cursor and Claude Code) run in the same window with no shared context. Without an explicit handoff block, the user defaults to whatever window is already open, which is often the wrong surface for the next task. The block is the handoff.
+
+## Do NOT
+
+- Skip it because the response was "just a question answer."
+- Skip it when you are in Plan mode, Ask mode, or any other read-only mode — those responses advance understanding and therefore have a next step.
+- Fabricate surface / mode / model combinations that are not in the table.
+- Claim "Claude Code CLI + Composer 2" - Composer 2 is Cursor-only.
+- Claim "Cursor + Claude Opus via CLI" - Claude CLI bills through Anthropic, not Cursor.

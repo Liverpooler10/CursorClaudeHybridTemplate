@@ -1,0 +1,27 @@
+# CLAUDE.local.md - Personal Overrides (DO NOT COMMIT)
+
+Rename this file to `CLAUDE.local.md` (without `.example`) for personal overrides. It is gitignored.
+
+Use this file for:
+
+- your preferred coding style details that differ from team conventions
+- personal model defaults (e.g. "I always want Opus for debugging")
+- short-term reminders scoped to your current context window
+- local credentials notes (never the credentials themselves)
+
+Do NOT put in here:
+
+- actual secrets, API keys, tokens
+- anything the rest of the team also needs (that goes in AGENTS.md)
+
+## Example sections
+
+### My preferred defaults
+
+- Default Claude model: Claude Sonnet 4.6
+- Take checkpoint every 3 file edits.
+- Prefer named functions over arrow functions in TS.
+
+### Current scratch notes
+
+- ...

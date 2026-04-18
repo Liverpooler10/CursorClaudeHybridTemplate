@@ -1,4 +1,5 @@
 {
+  "$schema": "https://code.claude.com/schemas/settings.json",
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "ui-ux-pro-max@ui-ux-pro-max-skill": true,
@@ -6,16 +7,80 @@
   },
   "extraKnownMarketplaces": {
     "ui-ux-pro-max-skill": {
-      "source": {
-        "source": "github",
-        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
-      }
+      "source": { "source": "github", "repo": "nextlevelbuilder/ui-ux-pro-max-skill" }
     },
     "obsidian-skills": {
-      "source": {
-        "source": "github",
-        "repo": "kepano/obsidian-skills"
-      }
+      "source": { "source": "github", "repo": "kepano/obsidian-skills" }
     }
-  }
+  },
+  "defaultMode": "plan",
+  "cleanupPeriodDays": 30,
+  "permissions": {
+    "defaultMode": "plan",
+    "deny": {
+      "shell": [
+        "^\\s*rm\\s+-rf\\s+(/|~|\\.|\\$HOME)(\\s|$)",
+        "^\\s*sudo\\b",
+        "^\\s*chmod\\s+777\\b",
+        "curl\\s+[^|]+\\|\\s*(sh|bash|zsh)",
+        "wget\\s+[^|]+\\|\\s*(sh|bash|zsh)",
+        "iwr\\s+[^|]+\\|\\s*iex",
+        "irm\\s+[^|]+\\|\\s*iex",
+        "git\\s+push\\s+(--force|-f)\\s+.*\\s+(main|master)\\b",
+        "mkfs\\.",
+        "dd\\s+if=.*of=/dev/"
+      ],
+      "read": [
+        "(^|/)\\.env$",
+        "(^|/)\\.env\\.(?!example$).+",
+        "\\.pem$",
+        "\\.key$",
+        "\\.crt$",
+        "(^|/)id_rsa(\\.|$)",
+        "(^|/)\\.ssh/",
+        "(^|/)\\.aws/credentials",
+        "(^|/)\\.claude/auth",
+        "(^|/)\\.anthropic/"
+      ],
+      "write": [
+        "(^|/)\\.env$",
+        "(^|/)\\.env\\.(?!example$).+",
+        "\\.pem$",
+        "\\.key$"
+      ]
+    },
+    "ask": {
+      "shell": [
+        "^\\s*(npm|pnpm|yarn)\\s+(install|add|i)\\b",
+        "^\\s*pip\\s+install\\b",
+        "^\\s*cargo\\s+install\\b",
+        "^\\s*brew\\s+install\\b",
+        "^\\s*apt(-get)?\\s+install\\b",
+        "^\\s*choco\\s+install\\b",
+        "^\\s*scoop\\s+install\\b",
+        "^\\s*go\\s+install\\b"
+      ],
+      "write": [
+        "\\.github/workflows/",
+        "\\.husky/",
+        "scripts/",
+        "\\.mcp\\.json",
+        "\\.claude/settings\\.json",
+        "\\.cursor/hooks\\.json"
+      ]
+    },
+    "allow": {
+      "shell": [
+        "^\\s*(git|node|npm run|pnpm run|yarn run)\\b",
+        "^\\s*(vitest|jest|playwright|eslint|tsc|prettier)\\b",
+        "^\\s*claude\\s+(plugins|doctor|/)"
+      ]
+    }
+  },
+  "mandatoryContext": [
+    "AGENTS.md",
+    ".planning/STATE.md",
+    ".planning/.bootstrap.json",
+    ".planning/MODE-GUIDE.md"
+  ]
 }

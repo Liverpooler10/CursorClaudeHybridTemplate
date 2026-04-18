@@ -1,0 +1,89 @@
+{
+  "$schema": "https://cursor.com/schemas/hooks.json",
+  "description": "Security hooks for __PROJECT_NAME__. Deny destructive commands and secret-file reads.",
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "name": "deny-destructive",
+        "deny": [
+          "^\\s*rm\\s+-rf\\s+(/|~|\\.|\\$HOME)(\\s|$)",
+          "^\\s*sudo\\b",
+          "^\\s*chmod\\s+777\\b",
+          "curl\\s+[^|]+\\|\\s*(sh|bash|zsh)",
+          "wget\\s+[^|]+\\|\\s*(sh|bash|zsh)",
+          "iwr\\s+[^|]+\\|\\s*iex",
+          "irm\\s+[^|]+\\|\\s*iex",
+          "git\\s+push\\s+(--force|-f)\\s+origin\\s+(main|master)",
+          "git\\s+push\\s+(--force|-f)\\s+.*\\s+(main|master)\\b",
+          "^\\s*:(\\)\\{\\s*:\\|:",
+          "mkfs\\.",
+          "dd\\s+if=.*of=/dev/"
+        ],
+        "onDeny": "block",
+        "message": "Blocked by Rule 020 / .cursor/hooks.json. This command is on the project deny-list. If you believe it is safe, write an ADR justifying the exception first."
+      },
+      {
+        "name": "ask-on-supply-chain",
+        "ask": [
+          "^\\s*(npm|pnpm|yarn)\\s+(install|add|i)\\b",
+          "^\\s*pip\\s+install\\b",
+          "^\\s*pipx\\s+install\\b",
+          "^\\s*cargo\\s+install\\b",
+          "^\\s*brew\\s+install\\b",
+          "^\\s*apt(-get)?\\s+install\\b",
+          "^\\s*choco\\s+install\\b",
+          "^\\s*scoop\\s+install\\b",
+          "^\\s*go\\s+install\\b"
+        ],
+        "onAsk": "prompt",
+        "message": "Supply-chain write. Confirm the package name and registry. Prefer locking versions and adding to an ADR."
+      },
+      {
+        "name": "ask-on-sensitive-paths",
+        "ask": [
+          "\\.github/workflows/",
+          "\\.husky/",
+          "scripts/",
+          "\\.mcp\\.json",
+          "\\.claude/settings\\.json",
+          "\\.cursor/hooks\\.json"
+        ],
+        "onAsk": "prompt",
+        "message": "Editing a security-critical file. Confirm intent."
+      }
+    ],
+    "beforeReadFile": [
+      {
+        "name": "deny-secret-files",
+        "deny": [
+          "(^|/)\\.env$",
+          "(^|/)\\.env\\.(?!example$).+",
+          "\\.pem$",
+          "\\.key$",
+          "\\.crt$",
+          "(^|/)id_rsa(\\.|$)",
+          "(^|/)\\.ssh/",
+          "(^|/)\\.aws/credentials",
+          "(^|/)\\.claude/auth",
+          "(^|/)\\.anthropic/"
+        ],
+        "onDeny": "block",
+        "message": "Blocked by Rule 020. Secret-like files are never read by agents in this project. If you need an env var, reference .env.example instead."
+      }
+    ],
+    "beforeWriteFile": [
+      {
+        "name": "deny-writing-secrets",
+        "deny": [
+          "(^|/)\\.env$",
+          "(^|/)\\.env\\.(?!example$).+",
+          "\\.pem$",
+          "\\.key$"
+        ],
+        "onDeny": "block",
+        "message": "Agents do not write .env or key files. Update .env.example and let the human copy values."
+      }
+    ]
+  }
+}

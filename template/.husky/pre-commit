@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh" 2>/dev/null || true
+
+echo "pre-commit: running guardrails"
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --no-banner || {
+    echo "xx  gitleaks: staged secrets detected. Aborting commit."
+    exit 1
+  }
+else
+  echo "!!  gitleaks not installed - skipping secret scan. Install: https://github.com/gitleaks/gitleaks"
+fi
+
+if [ -x "node_modules/.bin/lint-staged" ]; then
+  node_modules/.bin/lint-staged || exit 1
+fi
+
+# Warn if committing without bootstrap complete
+if [ -f ".planning/.bootstrap.json" ]; then
+  if node -e "process.exit(JSON.parse(require('fs').readFileSync('.planning/.bootstrap.json')).bootstrapped ? 0 : 1)"; then
+    :
+  else
+    echo "!!  .planning/.bootstrap.json says bootstrapped=false. Did you skip 'npm run bootstrap'?"
+    exit 1
+  fi
+fi
+
+exit 0

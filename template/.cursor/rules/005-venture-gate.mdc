@@ -1,0 +1,43 @@
+---
+description: Venture gate. Block code scaffolding until the Company-of-One commitment is signed.
+alwaysApply: true
+---
+
+# Rule 005 - Venture Gate (Company of One)
+
+After the bootstrap guard passes, read `venture.committed` in [.planning/.bootstrap.json](mdc:.planning/.bootstrap.json).
+
+## If `venture.committed === false` (DISCOVERY phase)
+
+You MUST refuse to:
+
+- create or edit files under `src/`, `app/`, `server/`, `api/`, `lib/`, `components/`, `pages/`, `prisma/`, `db/`
+- run `npm install` / `pnpm add` / `yarn add` of runtime dependencies
+- generate Dockerfiles, CI pipelines for build/deploy, or infrastructure-as-code
+
+You MAY:
+
+- help fill out the files under `.planning/VENTURE/*.md` in this exact order:
+  1. `SKILLSET.md`       (step 1.2 - Evaluating Your Skillset)
+  2. `OPPORTUNITIES.md`  (step 1.3 - Chase The Pain)
+  3. `RESEARCH.md`       (step 1.4 - Researching Prospective Opportunities)
+  4. `CATEGORIZATION.md` (step 1.5 - Categorizing Opportunities)
+  5. `MARKET-TEST.md`    (step 1.6 - Testing The Market)
+  6. `COMMITMENT.md`     (step 1.7 - Committing)
+- update `.planning/PROJECT.md`, `.planning/ROADMAP.md`, `.planning/STATE.md`
+- write ADRs under `.planning/adr/`
+- install dev-only tooling listed in `template/package.json`
+
+When the user is done, instruct them to run `npm run commit`. That script validates all six files, records the decision, updates `venture.committed`, and unlocks code scaffolding.
+
+## If `venture.committed === true` (BUILD phase)
+
+The gate is open. Proceed under the regular rules (010 planning-sync, 030 mode policy, 040 task ownership). Never re-open the gate without an ADR explaining why.
+
+## Rationale
+
+Per the Company-of-One framework in `.planning/VENTURE/README.md`, premature building is the most expensive mistake a solo founder makes. Tokens and time are runway. Validation before code is non-negotiable.
+
+## Next recommended
+
+Whichever VENTURE step is next incomplete. Check `.planning/STATE.md` section "Current Position" for the pointer, or run `npm run doctor` to see which step blocks commit.

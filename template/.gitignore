@@ -1,6 +1,53 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build
+dist/
+build/
+out/
+.next/
+.svelte-kit/
+.turbo/
+coverage/
+
+# Env / secrets
 .env
-.env.local
+.env.*
+!.env.example
+
+# Keys / certs
+*.pem
+*.key
+*.crt
+id_rsa*
+*.gpg
+
+# Agent auth / caches (NEVER commit)
+.claude/auth*
+.claude/credentials*
+.claude/local/
+.anthropic/
+.cursor/cache/
+.cursor/logs/
+CLAUDE.local.md
+
+# Cloud / infra credentials
+.aws/
+.ssh/
+
+# OS
 .DS_Store
-coverage
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Worktrees for parallel experiments
+worktrees/
+
+# Venture interviews (may contain PII)
+.planning/VENTURE/interviews/

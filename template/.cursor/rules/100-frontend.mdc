@@ -1,0 +1,45 @@
+---
+description: Frontend conventions. Loaded only when editing frontend files.
+globs: ["**/*.tsx", "**/*.jsx", "**/*.css", "**/*.scss", "**/*.vue", "**/*.svelte"]
+---
+
+# Rule 100 - Frontend
+
+## Baseline
+
+- Responsive breakpoints: 375, 768, 1024, 1440.
+- No emoji as UI icons. Use an icon library or inline SVG.
+- Respect `prefers-reduced-motion` and `prefers-color-scheme`.
+- Keyboard + screen-reader reachable for every interactive element.
+
+## Structure
+
+- One component per file. Public export matches filename.
+- Co-locate the component, its test, and its styles.
+- Shared primitives live in `src/shared/ui/`.
+
+## Styling
+
+- Prefer __FRONTEND__ conventions already in the project.
+- No inline hex colors in components. Use design tokens or CSS variables.
+
+## State
+
+- Local UI state in component.
+- Server state via a single data-fetching library (no mixed patterns).
+- Never store tokens / secrets in `localStorage` unless encrypted and justified in an ADR.
+
+## Performance
+
+- Lazy-load routes, heavy charts, image-heavy sections.
+- Measure before optimizing. No premature memoization.
+
+## Next recommended
+
+At task end, emit the standard block. For UI polish, default to:
+
+```
+Surface : Cursor Agent
+Mode    : default
+Model   : Composer 2 (Cursor)
+```

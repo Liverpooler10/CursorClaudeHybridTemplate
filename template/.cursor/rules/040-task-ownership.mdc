@@ -1,0 +1,31 @@
+---
+description: Single-writer rule. Only one agent edits a given file at a time.
+alwaysApply: true
+---
+
+# Rule 040 - Task Ownership
+
+## Why
+
+Two agents on the same files diverge fast. Cursor's native agent and Claude Code do NOT share context. Writing into each other's changes is how silent bugs and lost edits happen.
+
+## Protocol
+
+1. Before starting a file-modifying task, read `.planning/STATE.md` -> section "Session Continuity" -> line `Current owner:`.
+2. If the line is empty or `none`, claim it by setting:
+   ```
+   Current owner: <Cursor Agent | Cursor Ask | Claude Code CLI | Claude Code Extension> since <ISO timestamp>
+   ```
+3. On finish, clear it to `none`.
+4. If the line is already claimed by another surface, STOP and either:
+   - wait,
+   - spin a git worktree via `npm run worktree <name>` and work there,
+   - or ask the user to explicitly free the lock.
+
+## Exceptions
+
+Read-only exploration does not require the lock. Slash-commands under `.claude/commands/venture/` do not require the lock either, since they only touch `.planning/VENTURE/`.
+
+## Cleaning stale locks
+
+If the timestamp is older than 4 hours and no session is active, it is safe to clear.

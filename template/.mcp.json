@@ -1,0 +1,15 @@
+{
+  "$schema": "https://cursor.com/schemas/mcp.json",
+  "mcpServers": {
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "."
+      ],
+      "description": "Project-scoped filesystem MCP. Root is the project directory; agents cannot climb above it."
+    }
+  }
+}

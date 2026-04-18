@@ -1,0 +1,23 @@
+{
+  "name": "__PROJECT_NAME__",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "bootstrap": "node ./scripts/complete-bootstrap.mjs",
+    "commit": "node ./scripts/venture-commit.mjs",
+    "doctor": "node ./scripts/doctor.mjs",
+    "worktree": "node ./scripts/worktree.mjs",
+    "prepare": "husky install || true"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10"
+  },
+  "lint-staged": {
+    "*.{js,mjs,ts,tsx,json,md}": []
+  }
+}

@@ -1,0 +1,31 @@
+---
+description: Keep .planning/STATE.md in sync across sessions without burning tokens.
+alwaysApply: true
+---
+
+# Rule 010 - Planning Sync
+
+## Session start
+
+1. Read `.planning/STATE.md` - section "Current Position" and "Session Continuity".
+2. Read `.planning/.bootstrap.json`.
+3. Do NOT read `.planning/PROJECT.md` or `.planning/ROADMAP.md` unless the task explicitly requires them.
+
+## Session end
+
+Update `.planning/STATE.md`:
+
+- "Last session" -> today (YYYY-MM-DD).
+- "Stopped at" -> the last task finished or point of hand-off.
+- "Next 3 TODOs" -> concrete next actions.
+- "Current owner" -> clear if you were the owner.
+
+Do NOT rewrite sections that did not change. The file stays short on purpose.
+
+## Diff discipline
+
+When you need to sync with changes, use `git diff --stat` first. Only read the full diff of files that matter to the current task. This saves tokens and avoids context drift.
+
+## When to update ROADMAP.md
+
+Only when an ADR justifies it. Tactical changes live in STATE.md.
