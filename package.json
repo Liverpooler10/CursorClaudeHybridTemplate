@@ -4,7 +4,7 @@
   "description": "Scaffold a new project with a venture-gated Cursor + Claude Code hybrid setup.",
   "type": "module",
   "bin": {
-    "create-cursor-claude-hybrid": "./scripts/bootstrap.mjs"
+    "create-cursor-claude-hybrid": "scripts/bootstrap.mjs"
   },
   "files": [
     "scripts/bootstrap.mjs",
