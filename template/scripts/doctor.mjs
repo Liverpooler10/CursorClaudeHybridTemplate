@@ -2,7 +2,7 @@
 // Health check for a project scaffolded from create-cursor-claude-hybrid.
 // Prints a clear PASS/WARN/FAIL line per check and the next-recommended action.
 
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync, readdirSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
@@ -136,6 +136,56 @@ if (bootstrap?.venture?.committed) {
   }
 }
 
+// 11. Token-floor audit (approximate)
+//     Counts everything loaded on every session:
+//     - mandatoryContext files from .claude/settings.json (incl. AGENTS.md, STATE.md, MODE-GUIDE.md, .bootstrap.json)
+//     - all .cursor/rules/*.mdc with `alwaysApply: true`
+//     - CLAUDE.md (Claude Code entry point, always read)
+//     Rough ratio: 1 token ~ 4 bytes of markdown (English, ASCII-heavy).
+{
+  const tokenEstimate = (bytes) => Math.round(bytes / 4);
+  const tracked = [];
+  const addFile = (rel) => {
+    const abs = join(ROOT, rel);
+    if (!existsSync(abs)) return;
+    const bytes = statSync(abs).size;
+    tracked.push({ rel, bytes, tokens: tokenEstimate(bytes) });
+  };
+
+  addFile("AGENTS.md");
+  addFile("CLAUDE.md");
+  addFile(".planning/STATE.md");
+  addFile(".planning/MODE-GUIDE.md");
+  addFile(".planning/.bootstrap.json");
+
+  const rulesDir = join(ROOT, ".cursor", "rules");
+  if (existsSync(rulesDir)) {
+    for (const f of readdirSync(rulesDir)) {
+      if (!f.endsWith(".mdc")) continue;
+      const abs = join(rulesDir, f);
+      const content = readFileSync(abs, "utf8");
+      const front = content.match(/^---[\s\S]*?---/);
+      if (front && /alwaysApply:\s*true/.test(front[0])) {
+        addFile(`.cursor/rules/${f}`);
+      }
+    }
+  }
+
+  const totalTokens = tracked.reduce((a, b) => a + b.tokens, 0);
+  const detail = `~${totalTokens} tokens across ${tracked.length} files`;
+  // Thresholds tuned to this template's inherent complexity (venture gate + dual-agent + mandatoryContext).
+  // PASS < 5000, WARN 5000-7000, FAIL > 7000. Adjust after intentional slim-downs.
+  const top3 = () => [...tracked].sort((a, b) => b.tokens - a.tokens).slice(0, 3)
+    .map(t => `${t.rel} (~${t.tokens}t)`).join(", ");
+  if (totalTokens < 5000) {
+    pass("Context floor (token-audit)", detail);
+  } else if (totalTokens <= 7000) {
+    warn("Context floor (token-audit)", `${detail} - watch for bloat. Largest: ${top3()}`);
+  } else {
+    fail("Context floor (token-audit)", `${detail} - floor too heavy. Scope a rule or slim docs. Largest: ${top3()}`);
+  }
+}
+
 // Print
 for (const r of results) {
   const tag = r.level === "PASS" ? "ok " : r.level === "WARN" ? "!! " : "xx ";
@@ -188,6 +238,7 @@ Surface : ${nr.surface}
 Mode    : ${nr.mode}
 Model   : ${nr.model}
 Why     : ${nr.why}
+Session : fresh
 ---------------------------------------------------------------
 `);
 

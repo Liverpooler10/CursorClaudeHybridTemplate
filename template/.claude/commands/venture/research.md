@@ -32,4 +32,5 @@ Mode    : plan
 Model   : Sonnet 4.6
 Why     : CATEGORIZATION.md is a ranking pass, no heavy reasoning needed.
           Run `/venture:categorize`.
+Session : consider-clear
 ```

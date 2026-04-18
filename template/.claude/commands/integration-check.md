@@ -29,4 +29,5 @@ Surface : Cursor Agent
 Mode    : default
 Model   : Claude Sonnet 4.6
 Why     : integration fixes tend to be localized; fast loop wins.
+Session : ok
 ```

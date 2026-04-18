@@ -31,4 +31,5 @@ Surface : Claude Code CLI (with web search if Claude Pro allows) OR Cursor Ask m
 Mode    : plan
 Model   : Claude Opus 4.6 for research depth; Sonnet 4.6 otherwise
 Why     : RESEARCH.md needs citations. Run `/venture:research`.
+Session : consider-clear
 ```

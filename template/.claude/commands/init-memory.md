@@ -23,9 +23,9 @@ The upstream `/init` command tends to produce a long generated CLAUDE.md. For th
 ```
 Next recommended
 ----------------
-Surface : Cursor Ask mode
+Surface : Cursor Ask
 Mode    : ask
 Model   : Cursor Auto
-Why     : CLAUDE.md and AGENTS.md are synced; next real task picks up in
-          Plan mode per MODE-GUIDE.md.
+Why     : CLAUDE.md and AGENTS.md are synced; next real task picks up in Plan mode per MODE-GUIDE.md.
+Session : ok
 ```

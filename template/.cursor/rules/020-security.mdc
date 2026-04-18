@@ -1,7 +1,9 @@
 ---
 description: Security floor. Deny-list for commands and files; mirror of .cursor/hooks.json for places hooks cannot reach.
-alwaysApply: true
+globs: [".env*", ".env.example", "scripts/**", ".github/workflows/**", ".husky/**", ".mcp.json", ".claude/settings.json", ".cursor/hooks.json", "**/secrets/**", "**/*.pem", "**/*.key", "**/*.crt", "package.json", "pnpm-lock.yaml", "package-lock.json"]
 ---
+
+> Hard enforcement lives in `.cursor/hooks.json` and `.claude/settings.json.permissions` and applies to every shell call regardless of whether this rule is loaded. The guidance below is reasoning-layer advice for the listed files.
 
 # Rule 020 - Security Floor
 

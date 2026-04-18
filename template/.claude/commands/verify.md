@@ -37,6 +37,7 @@ Surface : Cursor Plan mode (or Claude CLI)
 Mode    : plan
 Model   : Claude Sonnet 4.6
 Why     : Phase verified; next phase begins with /plan-phase.
+Session : consider-clear
 ```
 
 ## Next recommended (FAIL)
@@ -48,4 +49,5 @@ Surface : Claude Code CLI
 Mode    : plan
 Model   : Claude Opus 4.6
 Why     : Repair phase benefits from a model that surfaces root causes, not symptoms.
+Session : ok
 ```

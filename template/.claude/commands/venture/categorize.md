@@ -33,4 +33,5 @@ Surface : Cursor Ask mode for metric drafting, then Claude Code CLI for experime
 Mode    : plan
 Model   : Sonnet 4.6 for drafting; Opus 4.6 when writing kill criteria.
 Why     : MARKET-TEST.md needs crisp, falsifiable hypotheses. Run `/venture:market-test`.
+Session : consider-clear
 ```

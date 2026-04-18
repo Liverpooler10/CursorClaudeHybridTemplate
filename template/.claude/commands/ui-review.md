@@ -49,4 +49,5 @@ Surface : Cursor Agent (to apply fixes)
 Mode    : default
 Model   : Composer 2 (Cursor)
 Why     : UI fixes are fast iteration; Composer 2 is purpose-built.
+Session : ok
 ```

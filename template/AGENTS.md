@@ -118,9 +118,17 @@ Surface : <Cursor Agent | Cursor Ask | Cursor Plan | Claude Code CLI | Claude Co
 Mode    : <plan | default | acceptEdits | auto | ask>
 Model   : <Claude Sonnet 4.6 | Claude Opus 4.6 | Composer 2 | Cursor Auto>
 Why     : <one-line justification tied to MODE-GUIDE.md>
+Session : <fresh | ok | consider-compact | consider-clear>
 ```
 
-Mapping reference: `.planning/MODE-GUIDE.md`.
+`Session:` heuristic (self-reported by the agent at the end of each turn):
+
+- `fresh` - first ~5 turns of this session, minimal reads so far.
+- `ok` - mid-session, context feels comfortable; no action needed.
+- `consider-compact` - many tool calls or long reasoning chain, but current task still open. Advise user to run `/compact` in Claude Code before continuing.
+- `consider-clear` - current task is **done** and STATE.md is up to date. Advise user to run `/session-end` then `/clear`, or start a fresh Cursor Composer session.
+
+Mapping reference: `.planning/MODE-GUIDE.md`. The only two valid omissions of the whole block: pure permission-denials, and raw multi-option prompts awaiting user choice.
 
 ## 11. Installed Claude Plugins (project scope)
 
@@ -142,3 +150,12 @@ Verify with `claude plugins list` inside the project.
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`, `test:`, `docs:`).
 - PR body must link an ADR when architecture changes.
 - Phase PRs require `/verify` output attached.
+
+## 14. Session Hygiene
+
+Long chat contexts are the biggest token sink. Rules:
+
+- Task done: emit `Session: consider-clear`, run `/session-end`, then `/compact`, then `/clear` (or new Cursor Composer).
+- Context heavy mid-task (>20 turns / >8 substantive reads / agent re-asks): emit `Session: consider-compact`.
+- Durable decisions go to `STATE.md` or an ADR, never into chat alone.
+- Sync with `git diff --stat`, not full `git diff`. Use `@`-mentions instead of whole-file reads.

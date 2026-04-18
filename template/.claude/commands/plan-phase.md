@@ -40,4 +40,5 @@ Surface : Claude Code CLI
 Mode    : plan (review the plan) -> switch to default when starting first task
 Model   : Claude Sonnet 4.6
 Why     : Plan is reviewed in plan mode; /execute picks up the first task in default.
+Session : consider-clear
 ```

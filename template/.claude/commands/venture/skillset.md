@@ -34,4 +34,5 @@ Mode    : plan
 Model   : Claude Sonnet 4.6 (default) OR Opus 4.6 for deeper challenge
 Why     : OPPORTUNITIES.md scoring benefits from a model that is good at
           pushing back on weak evidence. Run `/venture:chase-pain` next.
+Session : consider-clear
 ```

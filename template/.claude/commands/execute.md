@@ -45,4 +45,5 @@ Surface : Claude Code CLI
 Mode    : default (continue execute) or hand off to /verify when phase complete
 Model   : Claude Sonnet 4.6
 Why     : Execution loop is routine; verifier runs once phase tasks are done.
+Session : ok
 ```

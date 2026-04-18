@@ -209,7 +209,7 @@ Agents do not know which window you are typing in. Lead with:
 
 ### 5. Respect the mode policy
 
-From `.cursor/rules/030-claude-mode-policy.mdc`:
+From `AGENTS.md` §3 and `.planning/MODE-GUIDE.md`:
 
 - Multi-file change or rename → `plan` first.
 - Single-line or single-file fix → `default`.
@@ -324,7 +324,6 @@ For internal tools, client projects, or utilities where the venture framework do
    .cursor/rules/000-bootstrap-guard.mdc
    .cursor/rules/010-planning-sync.mdc
    .cursor/rules/020-security.mdc
-   .cursor/rules/030-claude-mode-policy.mdc
    .cursor/rules/035-next-step-hint.mdc
    .cursor/rules/040-task-ownership.mdc
    .cursor/rules/100-frontend.mdc
@@ -332,7 +331,7 @@ For internal tools, client projects, or utilities where the venture framework do
    .cursor/rules/200-testing.mdc
    .cursor/hooks.json
    .claude/settings.json
-   .claude/commands/{plan-phase,execute,verify,debug,ui-review,security-audit,integration-check,init-memory}.md
+   .claude/commands/{plan-phase,execute,verify,debug,ui-review,security-audit,integration-check,init-memory,session-end}.md
    .planning/{STATE.md,MODE-GUIDE.md,adr/0000-template.md,config.json}
    scripts/doctor.mjs
    .husky/pre-commit
@@ -414,11 +413,10 @@ my-project/
       000-bootstrap-guard.mdc   # self-enforcement (alwaysApply)
       005-venture-gate.mdc      # Company-of-One gate (alwaysApply)
       006-venture-workflow.mdc  # discovery coach (globs: .planning/VENTURE/**)
-      010-planning-sync.mdc     # STATE.md discipline (alwaysApply)
-      020-security.mdc          # security floor (alwaysApply)
-      030-claude-mode-policy.mdc
+      010-planning-sync.mdc     # STATE.md discipline (globs: .planning/**)
+      020-security.mdc          # security floor (globs: scripts/**, .github/workflows/**, .env*, ...)
       035-next-step-hint.mdc    # mandatory Next recommended footer (alwaysApply)
-      040-task-ownership.mdc    # single-writer rule (alwaysApply)
+      040-task-ownership.mdc    # single-writer rule (globs: .planning/STATE.md)
       100-frontend.mdc          # globs-scoped to *.tsx, *.css
       110-backend.mdc           # globs-scoped to server/**, api/**
       200-testing.mdc           # globs-scoped to *.test.*, *.spec.*

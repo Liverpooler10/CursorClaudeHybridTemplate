@@ -49,6 +49,8 @@ This is the lookup table used by the "Next recommended" footer that every agent 
 | Rename / migration | Claude CLI | plan | Opus 4.6 | High blast radius; plan hard |
 | Parallel experiment | Worktree + Cursor Agent | default | Auto | Isolated via `npm run worktree` |
 | Security-sensitive change | Claude CLI | plan | Opus 4.6 | Requires audit trail in ADR |
+| Session feels long (>20 turns / many reads) | Claude CLI | default | Sonnet 4.6 | Run `/session-end`, then `/compact`, then `/clear` - emit `Session: consider-compact` or `consider-clear` |
+| Task just completed | Claude CLI | default | Sonnet 4.6 | Run `/session-end` to flush STATE.md, then user compacts/clears - emit `Session: consider-clear` |
 
 If none of the rows match, default to: `Cursor Plan mode + Claude Sonnet 4.6, re-evaluate after reading STATE.md`.
 
@@ -61,3 +63,5 @@ If none of the rows match, default to: `Cursor Plan mode + Claude Sonnet 4.6, re
 ## How the "Next recommended" block uses this
 
 Agents read this file (or a cached summary) when emitting their footer. The Surface / Mode / Model line picks one row; the "Why" line quotes or paraphrases the row's reason.
+
+The footer also includes a `Session:` line with one of `fresh | ok | consider-compact | consider-clear` - see rule `.cursor/rules/035-next-step-hint.mdc` for the heuristic. This is how the user knows when to run `/compact` or `/clear` without having to track turn counts themselves.

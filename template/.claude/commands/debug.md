@@ -30,4 +30,5 @@ Surface : Cursor Agent (paste stack, iterate) OR Claude Code CLI with `!` bash s
 Mode    : default
 Model   : Claude Sonnet 4.6 (Opus 4.6 if the bug is gnarly and old)
 Why     : debugging benefits from fast iteration; switch to Opus only when Sonnet stalls.
+Session : ok
 ```

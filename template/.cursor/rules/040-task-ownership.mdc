@@ -1,7 +1,9 @@
 ---
 description: Single-writer rule. Only one agent edits a given file at a time.
-alwaysApply: true
+globs: [".planning/STATE.md"]
 ---
+
+> This rule loads when STATE.md is opened or edited. The principle applies project-wide and is also stated in AGENTS.md paragraph 6; the scoped rule keeps the detailed protocol close to the file where the `Current owner:` line lives.
 
 # Rule 040 - Task Ownership
 

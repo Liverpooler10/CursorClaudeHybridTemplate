@@ -45,4 +45,5 @@ Mode    : plan
 Model   : Cursor Auto (or Claude Sonnet 4.6)
 Why     : With the gate open, orchestration begins. Open ROADMAP.md and run
           `/plan-phase` for Phase 1 (Foundation).
+Session : consider-clear
 ```

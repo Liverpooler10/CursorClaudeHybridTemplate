@@ -36,10 +36,10 @@ globs: ["**/*.tsx", "**/*.jsx", "**/*.css", "**/*.scss", "**/*.vue", "**/*.svelt
 
 ## Next recommended
 
-At task end, emit the standard block. For UI polish, default to:
+At task end, emit the standard block (see rule `035-next-step-hint` for the full schema including `Session:`). For UI polish, default to:
 
 ```
 Surface : Cursor Agent
 Mode    : default
-Model   : Composer 2 (Cursor)
+Model   : Composer 2
 ```

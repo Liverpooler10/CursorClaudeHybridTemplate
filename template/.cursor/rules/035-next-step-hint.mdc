@@ -14,17 +14,29 @@ Surface : <Cursor Agent | Cursor Ask | Cursor Plan | Claude Code CLI | Claude Co
 Mode    : <plan | default | acceptEdits | auto | ask>
 Model   : <Claude Sonnet 4.6 | Claude Opus 4.6 | Composer 2 | Cursor Auto>
 Why     : <one line, <= 120 chars, pointing to MODE-GUIDE.md or the current phase>
+Session : <fresh | ok | consider-compact | consider-clear>
 ```
 
 The block goes at the very end of the response. No prose after it.
 
-## How to pick values
+## How to pick Surface / Mode / Model / Why
 
 1. Check `.planning/.bootstrap.json`:
    - `bootstrapped === false` -> Surface: Terminal, Mode: n/a, Model: n/a, Why: "run npm run bootstrap"
    - `venture.committed === false` -> See `.planning/VENTURE/README.md` and emit the block from the current VENTURE file.
 2. Otherwise consult `.planning/MODE-GUIDE.md` -> pick the row whose "Situation" best matches what was just done or what comes next.
 3. When in doubt: `Cursor Plan mode` + `Claude Sonnet 4.6` + "re-evaluate after reading STATE.md".
+
+## How to pick Session
+
+Self-report based on the current chat:
+
+- `fresh` - first ~5 turns, minimal reads.
+- `ok` - mid-session, up to ~20 turns / ~8 substantive reads.
+- `consider-compact` - heavy context but task still open -> user should `/compact`.
+- `consider-clear` - task done and STATE.md updated -> user should `/session-end`, then `/compact`, then `/clear`.
+
+Default to `ok` when uncertain. Never silently pick `fresh` to avoid the hint.
 
 ## The only two cases where the block may be omitted
 

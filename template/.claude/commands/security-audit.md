@@ -59,4 +59,5 @@ Surface : Claude Code CLI
 Mode    : plan (fix remediations with /execute afterwards)
 Model   : Claude Opus 4.6
 Why     : security findings benefit from deep reasoning on blast radius.
+Session : consider-clear
 ```

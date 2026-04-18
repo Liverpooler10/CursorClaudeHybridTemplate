@@ -35,4 +35,5 @@ Mode    : plan
 Model   : Claude Opus 4.6 (for the commit-decision review).
 Why     : COMMITMENT.md is the most expensive single decision in this phase.
           Opus pushes back hardest on weak evidence. Run `/venture:commit`.
+Session : consider-clear
 ```
