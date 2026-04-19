@@ -7,6 +7,7 @@ description: Plan the next roadmap phase. Produces a task breakdown, risk list, 
 ## Preconditions
 
 - `.planning/.bootstrap.json.venture.committed === true` (else refuse; stay in venture gate).
+- `.planning/COMMERCIAL/LANDING.md` is STATUS DONE (else refuse; rule 015-commercial-gate).
 - `.planning/ROADMAP.md` shows the next unstarted phase.
 - No `Current owner:` lock in `.planning/STATE.md` (or it is yours).
 
@@ -25,11 +26,24 @@ description: Plan the next roadmap phase. Produces a task breakdown, risk list, 
 5. Set `.planning/STATE.md` -> "Current Position" to the new phase and "Current owner: Claude Code CLI (plan-phase)".
 6. Create the phase branch if missing: `git checkout -b gsd/phase-N-<slug>` (ask before pushing).
 
+## Subagent delegation (research only, not writing)
+
+If the `superpowers` plugin is active AND the phase has 5 or more tasks, fan out one research subagent per task **in parallel** to answer:
+
+- What prior code or docs already address this task?
+- What external libraries or patterns best fit (ties in with rule 030 buy-vs-build)?
+- What tests exist that already cover part of the acceptance criteria?
+
+Collect the research into the PLAN.md under a `## Research notes` section per task. Do not let subagents modify code or the plan itself - they return bullet points, the orchestrator writes the plan.
+
+If `superpowers` is not active or the phase has < 5 tasks, do the research linearly.
+
 ## Do NOT
 
 - Touch any code files.
 - Install dependencies.
 - Commit without user approval on the plan.
+- Let subagents write to PLAN.md directly - they only return research notes.
 
 ## Next recommended
 

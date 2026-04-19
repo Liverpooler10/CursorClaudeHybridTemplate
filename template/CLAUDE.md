@@ -2,10 +2,11 @@
 
 > Single source of conventions: **[AGENTS.md](AGENTS.md)**. Cursor mirrors via `.cursor/rules/*.mdc`. Read `AGENTS.md` first; the lines below are the non-negotiable short form.
 
-## Gates (stop if either fails)
+## Gates (stop if any fails)
 
 1. **Bootstrap.** If `.planning/.bootstrap.json.bootstrapped === false` -> tell the user to run `npm run bootstrap`. No ad-hoc `.cursorrules` or scaffold code.
 2. **Venture.** If `.bootstrap.json.venture.committed === false` -> DISCOVERY mode: only edit `.planning/VENTURE/*.md`, `.planning/PROJECT.md`, `.planning/ROADMAP.md`, `.planning/STATE.md`, `.planning/adr/*`. Refuse code edits in `src/`, `app/`, `server/`, `api/`, `lib/`, `components/`, `pages/`, `prisma/`, `db/`.
+3. **Commercial.** If venture is committed BUT `.planning/COMMERCIAL/LANDING.md` still has `<!-- STATUS: TODO -->` or `<!-- fill -->` placeholders -> COMMERCIAL mode: only edit under `.planning/COMMERCIAL/`, `.planning/STATE.md`, `.planning/adr/*`. Refuse code edits and `/plan-phase`. Run `/commercial:landing` first.
 
 ## Mandatory Reads Per Session
 

@@ -12,7 +12,8 @@ Frontend:      __FRONTEND__
 
 1. **Bootstrap gate.** If `.planning/.bootstrap.json` has `bootstrapped === false`, stop and run `npm run bootstrap`.
 2. **Venture gate.** If `.bootstrap.json.venture.committed === false`, refuse code edits outside `.planning/`. Follow the workflow in `.planning/VENTURE/README.md`.
-3. **Security deny-lists** in `.cursor/hooks.json` and `.claude/settings.json.permissions` are ground truth. Do not negotiate them away.
+3. **Commercial gate.** If venture is committed but `.planning/COMMERCIAL/LANDING.md` is missing or still has `<!-- STATUS: TODO -->` / `<!-- fill -->`, refuse code edits and refuse `/plan-phase`. Work the commercial track first via `/commercial:landing`. Enforced by rule `015-commercial-gate.mdc`. Sales page precedes product (Troy 1.6).
+4. **Security deny-lists** in `.cursor/hooks.json` and `.claude/settings.json.permissions` are ground truth. Do not negotiate them away.
 
 ## 2. Surface Decision Tree (Cursor vs. Claude Code)
 
@@ -43,30 +44,11 @@ Extra routing rules:
 
 ## 3. Mode Policy (Claude Code)
 
-From the DataCamp guide, mapped to this project:
-
-| Mode | Use when | Avoid when |
-|---|---|---|
-| `plan` | Multi-file changes, any rename / migration, first touch of unfamiliar area | Single-line fix |
-| `default` | Single-file edits, exploration, debugging | Bulk edits |
-| `acceptEdits` | Scoped refactor after a checkpoint | New feature work |
-| `auto` | Inside an isolated git worktree | Main working tree |
-| `bypassPermissions` | Sandboxed CI only | Anywhere else, always |
-
-Take a Checkpoint before `/execute` and before any `acceptEdits` session. Name it with the phase / task id so rewind is cheap.
+`.planning/MODE-GUIDE.md` is the single source of truth for which mode to use when. Default mode for this project is `plan`, set in `.claude/settings.json`. Take a Checkpoint before `/execute` and any `acceptEdits` session.
 
 ## 4. Model Policy
 
-| Task class | Default model | Upgrade when |
-|---|---|---|
-| Exploration, small edits | Claude Sonnet 4.6 (or Cursor Auto) | - |
-| Research, market analysis | Claude Opus 4.6 | Evidence quality matters |
-| Commit decision review | Claude Opus 4.6 | Always |
-| UI iteration, frontend polish | Composer 2 (Cursor) | - |
-| Long autonomous run | Claude Sonnet 4.6 | Opus 4.6 if complexity spikes |
-| Cost-sensitive hour | Sonnet 4.6 | - |
-
-Never use GPT / Gemini for venture-gate work; the prompts in `.claude/commands/venture/` are tuned to Claude's discourse style.
+`.planning/MODE-GUIDE.md` is the single source of truth. Default model is `claude-sonnet-4-5`, set in `.claude/settings.json`. Upgrade to Opus for venture-commit and research-depth decisions only. Never GPT / Gemini for `venture/*` commands - prompts are tuned to Claude's discourse.
 
 ## 5. Context Budget
 
@@ -136,7 +118,9 @@ Mapping reference: `.planning/MODE-GUIDE.md`. The only two valid omissions of th
 - `ui-ux-pro-max@ui-ux-pro-max-skill`
 - `obsidian@obsidian-skills`
 
-Verify with `claude plugins list` inside the project.
+Installed automatically during `npm create cursor-claude-hybrid` (default on; pass `--no-install-claude-plugins` to skip). `npm run doctor` verifies them on every health check; a `WARN` line names any missing plugin plus the install command.
+
+When `superpowers` is active, `/execute` delegates independent subtasks to parallel subagents (at least 3 independent subtasks required) and `/plan-phase` fans out research subagents (at least 5 tasks required). Without `superpowers` both commands run linearly - behaviour is identical otherwise.
 
 ## 12. Testing Strategy
 
@@ -159,3 +143,4 @@ Long chat contexts are the biggest token sink. Rules:
 - Context heavy mid-task (>20 turns / >8 substantive reads / agent re-asks): emit `Session: consider-compact`.
 - Durable decisions go to `STATE.md` or an ADR, never into chat alone.
 - Sync with `git diff --stat`, not full `git diff`. Use `@`-mentions instead of whole-file reads.
+- Kill-Date Watch (rule `050-kill-date-watch.mdc`): when editing COMMITMENT.md or METRICS.md with < 30 days to kill-date, the agent prepends a visible countdown and recommends `/commercial:check`. This is not optional - ignoring the kill-date is how ventures die quietly.

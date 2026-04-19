@@ -1,0 +1,60 @@
+---
+description: Performance floor for stack decisions. Prefer static and serverless until proven otherwise.
+globs: [".planning/adr/**", "src/**", "app/**", "server/**", "api/**"]
+---
+
+# Rule 120 - Performance Default
+
+Every stack ADR and every feature that introduces new infrastructure must answer these three questions **before proposing implementation**. If the answer to any is "yes, but we are going heavier", the ADR must include an explicit `Performance floor` field with the reason.
+
+## The three questions
+
+### 1. Can it be static?
+
+Tools to consider first: Astro, 11ty, Hugo, Next.js static export, Nuxt static, or plain HTML.
+
+If the content is not user-specific and changes less than once per hour, the answer is yes. A static site beats an SPA for time-to-interactive, SEO, cost, and maintainability.
+
+### 2. Can it be serverless / BaaS, no custom backend?
+
+Services that often kill the need for a dedicated backend:
+
+- Supabase / Firebase (database + auth + storage in one)
+- Stripe (payments, customer portal, subscriptions)
+- Resend / Loops (transactional email)
+- Cloudflare Workers / Vercel Functions for the 2-3 endpoints that cannot be moved client-side
+
+If all mutations can be made by the browser against a managed BaaS with row-level security, no custom backend is needed.
+
+### 3. Can it skip a database?
+
+Alternatives to a self-hosted or managed SQL/NoSQL database:
+
+- Airtable / Notion API (acceptable for < 1k rows, rarely-written data)
+- Google Sheets API (ops-heavy data, human-editable)
+- File storage + flat JSON (simplest possible)
+
+Only commit to a database when the schema is stable AND writes exceed 10/minute AND queries are non-trivial.
+
+## Mandatory ADR field
+
+When any answer is "no", add this to the stack ADR:
+
+```markdown
+## Performance floor
+
+- Static answer: <yes | no - reason>
+- Serverless answer: <yes | no - reason>
+- DB-less answer: <yes | no - reason>
+- Accepted cost: <EUR / month at expected 6-month volume>
+- Revisit trigger: <condition that would push us heavier, e.g. "5 paying customers need real-time updates">
+```
+
+## Enforcement
+
+- For new ADRs under `.planning/adr/`: block merge if the `Performance floor` section is missing when any answer is "no".
+- For new code under `src/`, `app/`, `server/`, `api/`: if it introduces a heavier-than-necessary stack element, require a link to an ADR with the Performance floor field.
+
+## Rationale
+
+Two reasons: user experience (static + BaaS stays fast under load spikes) and founder runway (managed services have predictable, small, monthly bills). Performance regressions caused by premature custom infrastructure are the single most common rewrite we see.

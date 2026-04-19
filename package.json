@@ -1,6 +1,6 @@
 {
   "name": "create-cursor-claude-hybrid",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Scaffold a new project with a venture-gated Cursor + Claude Code hybrid setup.",
   "type": "module",
   "bin": {

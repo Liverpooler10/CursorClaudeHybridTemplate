@@ -1,30 +1,70 @@
 <!-- STATUS: TODO -->
 # 1.5 - Categorizing Opportunities
 
-Framework: Company of One - "Categorizing Opportunities".
+Framework: Company of One - "Categorizing Opportunities" (Troy 1.5).
 
-## Three-axis scoring (each 1-5)
+Troy's three axes with explicit value buckets. Do not invent new buckets.
 
-- **Skills Fit**: how directly your SKILLSET.md advantages apply.
-- **Pain Size**: composite from `OPPORTUNITIES.md` normalized to 1-5.
-- **Effort to MVP**: 5 = under 4 weeks solo; 1 = over 6 months.
+## Troy's three axes
 
-Also track business-model archetype and moat:
+### Timeline-to-Ship
 
-- **Archetype**: one of `Productized Service`, `SaaS`, `Marketplace`, `Content`, `Tool`, `Physical`, `Hybrid`.
-- **Moat candidate**: one of `Distribution`, `Data`, `Speed`, `Brand`, `Domain trust`, `None yet`.
+How long until you have a lean version of the product live and taking money.
+
+- `< 1 Month` - strong signal the space is lean-testable
+- `1 - 3 Months` - acceptable, still close to lean
+- `3+ Months` - WARNING: if this is your default, you are not thinking lean enough
+- `Ongoing` - service-style business with no finite ship
+
+If more than half of your shortlist is `3+ Months`, go back to RESEARCH.md and ask: what's the smallest thing I could sell today that addresses this pain?
+
+### Opportunity-Size
+
+Anchored on the SOM you calculated in RESEARCH.md.
+
+- `Low (< 500k)`
+- `Mid (< 1m)`
+- `Large (< 10m)`
+- `Venture` - SOM >= 10m, candidate for venture funding
+
+### Confidence
+
+Your honest probability that this opportunity can generate ANY money at all.
+
+- `Low (< 10%)`
+- `Fair (10-50%)`
+- `Likely (50-80%)`
+- `High (> 80%)`
+
+Confidence gets a natural boost if you yourself would pay for the product.
 
 ## Scored Matrix
 
-| Candidate | Archetype | Skills Fit | Pain Size | Effort to MVP | Composite (Fit x Pain x Effort) | Moat | Notes |
-|---|---|---|---|---|---|---|---|
-| <!-- fill --> | | | | | | | |
+| Candidate | Timeline-to-Ship | Opportunity-Size | Confidence | Archetype | Moat candidate | Notes |
+|---|---|---|---|---|---|---|
+| <!-- fill --> | | | | | | |
 
-Composite = Skills Fit * Pain Size * Effort. Higher is better. Minimum composite for shortlist: 30.
+### Archetype and Moat (solo-founder lens)
+
+- **Archetype**: one of `Productized Service`, `SaaS`, `Marketplace`, `Content`, `Tool`, `Physical`, `Hybrid`.
+- **Moat candidate**: one of `Distribution`, `Data`, `Speed`, `Brand`, `Domain trust`, `None yet`.
+- Preferred for solo: Productized Service, SaaS (narrow), Tool.
+- Risky solo: Marketplace (chicken-and-egg), Physical (capex), Hybrid (coordination).
+
+## Picking the winner
+
+Troy's rule (no formula): lower timeline-to-ship lowers the need for high confidence. If you can ship in < 1 month, a `Fair` confidence is enough to try. Bigger space does not equal better; a `Venture` SOM with `Fair` confidence is a coin flip that takes years.
+
+Recommended pairings worth pursuing:
+
+- `< 1 Month` + `Low or Mid` + `Fair+` - the classic micro-product. Go.
+- `1 - 3 Months` + `Mid or Large` + `Likely` - strong solo play. Go.
+- `3+ Months` + `Venture` + `High` - venture-scale attempt; only if funded or fully convicted.
+- Anything else - park or kill.
 
 ## Shortlist (<= 3)
 
-1. <!-- fill -->
+1. <!-- fill: candidate + why it survived -->
 2. <!-- fill -->
 3. <!-- fill -->
 
@@ -34,14 +74,9 @@ Composite = Skills Fit * Pain Size * Effort. Higher is better. Minimum composite
 |---|---|---|
 | <!-- fill --> | | |
 
-## Archetype fit for "Company of One"
+## Preferred archetype justification
 
-A solo founder does best with high-leverage, low-coordination archetypes. Rank the shortlist by solo-suitability:
-
-- Preferred: Productized Service, SaaS (narrow), Tool
-- Risky solo: Marketplace (chicken-and-egg), Physical (capex), Hybrid (coordination)
-
-State your preferred archetype and why, given your SKILLSET and runway.
+State which archetype you will actually build, and why, given your SKILLSET and runway.
 
 - <!-- fill -->
 

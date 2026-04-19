@@ -14,6 +14,7 @@
     }
   },
   "defaultMode": "plan",
+  "defaultModel": "claude-sonnet-4-5",
   "cleanupPeriodDays": 30,
   "permissions": {
     "defaultMode": "plan",

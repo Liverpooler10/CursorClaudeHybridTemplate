@@ -90,10 +90,13 @@ npm run doctor    # 18-point health check
 ```
 ok  Node >= 18 - node 20.x.x
 ok  Claude Code CLI - 2.x.x
+ok  Claude plugins - 3/3 enabled
 ok  Bootstrap complete
 !!  Venture gate - open; pending: SKILLSET.md, ...
+ok  Commercial gate - LANDING.md ready; /plan-phase unlocked
 ok  AGENTS.md
-ok  rule 000 / 005 / 035
+ok  rule 000 / 005 / 015 / 030 / 035 / 120
+ok  Context floor (token-audit) - ~3800 tokens across 9 files
 ...
 Next recommended
 ----------------
@@ -104,6 +107,8 @@ Why     : Venture gate: fill SKILLSET.md next. See .planning/MODE-GUIDE.md.
 ```
 
 A `WARN` on gitleaks is fine at first. All `FAIL` lines must be resolved before continuing.
+
+For a deep dive on which files dominate the context floor, run `npm run doctor -- --verbose-tokens`. It prints a top-10 ranking of every always-loaded file with its token estimate so you can hunt bloat directly.
 
 ### Alternative paths (if you cannot use npx)
 
@@ -143,6 +148,30 @@ Why:
 The only structural opt-in at bootstrap time is `--with-feature-skeleton`, which creates a feature-sliced `src/modules/<feature>/` tree. Use it only if you already know Phase 1 will produce a full-stack TS app. Otherwise defer and add it via ADR.
 
 ---
+
+## Daily workflow: `npm run next`
+
+Since v0.4.0 the template ships a single launcher that decides surface + mode + model + slash-command for you, then spawns the right tool:
+
+```bash
+npm run next
+```
+
+What it does:
+
+1. Reads `.planning/.bootstrap.json` and the current discovery / commercial / phase state.
+2. Picks the next step (next unfilled VENTURE file, next commercial artifact, next phase task).
+3. Spawns `claude` with the correct `--permission-mode`, `--model`, and opening slash-command — or, if `claude` is missing from PATH, prints a copy-paste-ready instruction for Cursor Ask mode.
+
+Typical day:
+
+```
+morning  : npm run next      # picks up where you stopped
+mid-task : /session-end       # inside Claude, flushes STATE.md
+evening  : /compact + /clear  # keeps tomorrow cheap
+```
+
+The "Next recommended" footer (below) remains the authoritative handoff inside an active agent turn. `npm run next` is the answer for "I just sat down, what do I do?".
 
 ## How to prompt correctly with this setup
 
@@ -195,6 +224,12 @@ The agents always know which gate is active (rules `000`, `005`, `010` are `alwa
 | `/security-audit` | Deps / secrets / hooks / MCP | `SECURITY-AUDIT.md` |
 | `/integration-check` | Cross-phase E2E flows | `INTEGRATION-CHECK.md` |
 | `/init-memory` | Re-sync `CLAUDE.md` vs `AGENTS.md` | Thin `CLAUDE.md` |
+| `/commercial:landing` | Landing-page copy | `COMMERCIAL/LANDING.md` |
+| `/commercial:icp` | Narrow the ICP | `COMMERCIAL/ICP.md` |
+| `/commercial:pricing` | First-customer pricing | `COMMERCIAL/PRICING.md` |
+| `/commercial:interview-log` | Structure customer interview | `COMMERCIAL/INTERVIEWS/<date>.md` |
+| `/commercial:check` | Weekly commercial health | `COMMERCIAL/METRICS.md` signal |
+| `/commercial:competitor-watch` | Monthly competitor snapshot | `COMMERCIAL/COMPETITORS.md` |
 
 Everything outside this verb set goes as freeform prose to Cursor Agent (short iterations, visual UI) or Claude Code CLI `plan` mode (multi-file, rename, migration).
 
@@ -371,10 +406,13 @@ flowchart TD
     G --> H["/venture:market-test"]
     H --> I["/venture:commit"]
     I --> J["npm run commit (writes ADR 0001)"]
-    J --> K{"Phase 1: architecture decisions here"}
+    J --> J2{"Commercial gate (.planning/COMMERCIAL/LANDING.md)"}
+    J2 -->|"fill via /commercial:landing"| K{"Phase 1: architecture decisions here"}
     K --> L["ADRs for stack, data model, UI layout"]
-    L --> M["/plan-phase -> /execute -> /verify -> PR"]
+    L --> M["Tech: /plan-phase -> /execute -> /verify -> PR"]
+    L --> M2["Commercial: /commercial:icp, pricing, interview-log, check"]
     M --> N["Phase 2, 3, 4 ..."]
+    M2 --> N
 ```
 
 ---
@@ -410,24 +448,29 @@ my-project/
   .cursorrules                  # thin Cursor pointer (see .cursor/rules/ instead)
   .cursor/
     rules/
-      000-bootstrap-guard.mdc   # self-enforcement (alwaysApply)
-      005-venture-gate.mdc      # Company-of-One gate (alwaysApply)
-      006-venture-workflow.mdc  # discovery coach (globs: .planning/VENTURE/**)
-      010-planning-sync.mdc     # STATE.md discipline (globs: .planning/**)
-      020-security.mdc          # security floor (globs: scripts/**, .github/workflows/**, .env*, ...)
-      035-next-step-hint.mdc    # mandatory Next recommended footer (alwaysApply)
-      040-task-ownership.mdc    # single-writer rule (globs: .planning/STATE.md)
-      100-frontend.mdc          # globs-scoped to *.tsx, *.css
-      110-backend.mdc           # globs-scoped to server/**, api/**
-      200-testing.mdc           # globs-scoped to *.test.*, *.spec.*
+      000-bootstrap-guard.mdc      # self-enforcement (alwaysApply)
+      005-venture-gate.mdc         # Company-of-One gate (alwaysApply)
+      006-venture-workflow.mdc     # discovery coach (globs: .planning/VENTURE/**)
+      010-planning-sync.mdc        # STATE.md discipline (globs: .planning/**)
+      015-commercial-gate.mdc      # sales-before-product gate (alwaysApply)
+      020-security.mdc             # security floor (globs: scripts/**, .github/workflows/**, .env*, ...)
+      030-buy-vs-build.mdc         # buy commodity capabilities by default (alwaysApply)
+      035-next-step-hint.mdc       # mandatory Next recommended footer (alwaysApply)
+      040-task-ownership.mdc       # single-writer rule (globs: .planning/STATE.md)
+      050-kill-date-watch.mdc      # countdown warning on COMMITMENT.md / METRICS.md edits
+      100-frontend.mdc             # globs-scoped to *.tsx, *.css
+      110-backend.mdc              # globs-scoped to server/**, api/**
+      120-performance-default.mdc  # static / serverless / DB-less first (globs: ADRs + code)
+      200-testing.mdc              # globs-scoped to *.test.*, *.spec.*
     hooks.json                  # deny/ask for shell commands + file reads
   .claude/
-    settings.json               # permissions (deny/ask/allow) + plan default mode
+    settings.json               # permissions (deny/ask/allow) + plan default mode + default model
     commands/
       init-memory.md
       plan-phase.md / execute.md / verify.md / debug.md
       ui-review.md / security-audit.md / integration-check.md
       venture/{skillset,chase-pain,research,categorize,market-test,commit}.md
+      commercial/{landing,icp,pricing,interview-log,check,competitor-watch}.md
     skills/README.md
   .mcp.json                     # whitelist: filesystem MCP only
   .planning/
@@ -436,6 +479,7 @@ my-project/
     config.json                 # branching_strategy: phase
     MODE-GUIDE.md               # surface/mode/model lookup table
     VENTURE/                    # 7-step Company-of-One workflow
+    COMMERCIAL/                 # post-commit commercial track (landing, ICP, pricing, interviews, metrics)
     adr/0000-template.md
   scripts/
     complete-bootstrap.mjs      # flip marker when cloning manually
@@ -452,6 +496,31 @@ my-project/
 ```
 
 ---
+
+## Long-term rhythm
+
+Once Phase 1 is shipped and the first customers exist, the template assumes a steady weekly+monthly cadence:
+
+- **Daily** - `npm run next`. Picks up whatever is next across venture / commercial / phase.
+- **Weekly** - `/commercial:check`. Produces a signal (`on track`, `watch`, `kill candidate`, `double down`) and appends it to `COMMERCIAL/METRICS.md`. Rule `050-kill-date-watch` surfaces a countdown warning when you edit COMMITMENT.md or METRICS.md within 30 days of the kill-date.
+- **Monthly** - `/commercial:competitor-watch`. Snapshots each competitor in `COMMERCIAL/COMPETITORS.md`, diffs vs. last month, flags red flags. Requires opt-in fetch MCP (see `.mcp.json._opt_in_servers.fetch`).
+
+The cadence is designed so a founder can spend 80 % of active hours on sales + customer conversations while the AI handles the tech track. If any cadence item starts being skipped, `/commercial:check` will eventually surface it as a blocker.
+
+## Versioning
+
+This package follows [Semantic Versioning](https://semver.org):
+
+- **Major** (e.g. 1.0.0 -> 2.0.0): breaking changes to slash-command contracts, bootstrap layout, or rule IDs. Migration notes in CHANGELOG.
+- **Minor** (e.g. 1.0.0 -> 1.1.0): new commands, new rules, new `.planning/` subdirectories. Existing scaffolds keep working.
+- **Patch** (e.g. 1.0.0 -> 1.0.1): doc fixes, threshold tweaks, bug fixes in scripts.
+
+Distribution:
+
+- Latest stable: `npm create cursor-claude-hybrid@latest` (npm tag `latest`).
+- Previous major line: `npm create cursor-claude-hybrid@legacy` (npm tag `legacy`, preserved for 6 months after a major bump).
+
+Breaking-change policy: before removing any slash-command or rule, the template ships one minor version where the feature is deprecated but functional, with a `WARN` line in `npm run doctor`.
 
 ## Troubleshooting
 

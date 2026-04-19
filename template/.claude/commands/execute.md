@@ -23,6 +23,25 @@ description: Execute tasks from the current phase plan atomically, with checkpoi
    - update "Last session" timestamp.
 8. Move to next task.
 
+## Subagent delegation
+
+If the `superpowers` plugin (`@claude-plugins-official`) is active AND the current task has at least 3 independent subtasks (no shared-file edits, no ordering dependency), delegate each subtask to a subagent instead of running linearly. Typical shape:
+
+- file generation + matching test file + docstring update for the same unit
+- three unrelated file renames in a codemod sweep
+- migrations for N tables that don't share foreign keys
+
+Pattern:
+
+1. In `plan` mode, list the subtasks and confirm independence with the user.
+2. Spawn one subagent per subtask via the plugin's `task` primitive. Each subagent gets: a one-sentence goal, the acceptance criterion, and the exact files it owns.
+3. Wait for all subagents to report. Collect their diffs.
+4. Review as one combined change. Commit atomically with a single Conventional Commits message that references every subtask id.
+
+If `superpowers` is not active, continue linearly and note in the output that parallel execution was skipped. Do not try to fake parallelism with sequential runs - the benefit is both speed and independent reasoning.
+
+Do NOT delegate: anything that writes to `.planning/STATE.md`, anything that touches security-sensitive paths (enforced by hooks), or anything that modifies the same file as another subtask.
+
 ## Stop conditions
 
 - 3 consecutive test-fix attempts failed -> stop, summarize, hand back.

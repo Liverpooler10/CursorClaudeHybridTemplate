@@ -1,0 +1,39 @@
+---
+description: Commercial gate. After venture commit, block code scaffolding until LANDING.md is filled.
+alwaysApply: true
+---
+
+# Rule 015 - Commercial Gate (Sales Before Product)
+
+Applies only after Rule 005 (venture gate) has opened (`.bootstrap.json.venture.committed === true`).
+
+## If `.planning/COMMERCIAL/LANDING.md` is missing OR has `<!-- STATUS: TODO -->` OR contains any `<!-- fill -->` placeholder
+
+You MUST refuse to:
+
+- create or edit files under `src/`, `app/`, `server/`, `api/`, `lib/`, `components/`, `pages/`, `prisma/`, `db/`
+- run `npm install` / `pnpm add` / `yarn add` of runtime dependencies
+- generate Dockerfiles, CI build/deploy pipelines, or infrastructure-as-code
+- run `/plan-phase` or `/execute`
+
+You MAY:
+
+- edit any file under `.planning/COMMERCIAL/`
+- edit `.planning/STATE.md`, `.planning/PROJECT.md`, `.planning/ROADMAP.md`
+- write ADRs under `.planning/adr/`
+- run any `/commercial:*` slash-command
+- run any `/venture:*` slash-command (for retroactive edits before lock-in)
+
+When the user is done, verify that `.planning/COMMERCIAL/LANDING.md` has `<!-- STATUS: DONE -->` and no remaining `<!-- fill -->` tokens. Then announce the gate is open; `/plan-phase` becomes available.
+
+## Rationale
+
+Troy's Company-of-One 1.6 explicitly: ten paying customers before the "dream product". A landing page is the smallest artifact that can test the offer at scale without writing code. Building the product before the sales page means validating nothing.
+
+## Escape hatch
+
+If the project has an existing validated product and this gate is a retrofit, create `.planning/adr/0002-commercial-gate-skipped.md` documenting why and manually set `.planning/COMMERCIAL/LANDING.md` to `<!-- STATUS: DONE -->`. The gate-open announcement is permanent; do not re-close.
+
+## Next recommended
+
+When the gate is still closed, recommend `/commercial:landing`. When it opens, recommend `/plan-phase`.

@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const VERBOSE_TOKENS = process.argv.includes("--verbose-tokens");
 
 const results = [];
 function pass(label, detail = "") { results.push({ level: "PASS", label, detail }); }
@@ -22,11 +23,33 @@ function fail(label, detail = "") { results.push({ level: "FAIL", label, detail 
 }
 
 // 2. claude CLI present
+let claudeInPath = false;
 {
   const shell = process.platform === "win32";
   const r = spawnSync("claude", ["--version"], { stdio: "pipe", shell });
-  if (r.status === 0) pass("Claude Code CLI", (r.stdout?.toString() || "").trim());
+  if (r.status === 0) { pass("Claude Code CLI", (r.stdout?.toString() || "").trim()); claudeInPath = true; }
   else warn("Claude Code CLI", "`claude` not in PATH (install from https://claude.ai)");
+}
+
+// 2b. Claude plugins actually installed (requires claude CLI)
+if (claudeInPath) {
+  const shell = process.platform === "win32";
+  const r = spawnSync("claude", ["plugins", "list"], { stdio: "pipe", shell });
+  if (r.status !== 0) {
+    warn("Claude plugins", "`claude plugins list` failed - check plugin config manually");
+  } else {
+    const out = (r.stdout?.toString() || "") + (r.stderr?.toString() || "");
+    const expected = [
+      "superpowers@claude-plugins-official",
+      "ui-ux-pro-max@ui-ux-pro-max-skill",
+      "obsidian@obsidian-skills"
+    ];
+    const missing = expected.filter(name => !out.includes(name));
+    if (missing.length === 0) pass("Claude plugins", `${expected.length}/${expected.length} enabled`);
+    else warn("Claude plugins", `missing: ${missing.join(", ")} - run \`claude plugins install <name>\` or re-bootstrap with --install-claude-plugins`);
+  }
+} else {
+  warn("Claude plugins", "skipped (claude CLI not in PATH)");
 }
 
 // 3. bootstrap marker
@@ -57,6 +80,21 @@ if (bootstrap) {
     }
     if (missing.length) warn("Venture gate", `open; pending: ${missing.join(", ")}`);
     else warn("Venture gate", "files look filled - run `npm run commit`");
+  }
+}
+
+// 4b. Commercial gate status (only relevant after venture commit)
+if (bootstrap?.venture?.committed) {
+  const landing = join(ROOT, ".planning", "COMMERCIAL", "LANDING.md");
+  if (!existsSync(landing)) {
+    warn("Commercial gate", "LANDING.md missing - run `/commercial:landing`");
+  } else {
+    const c = readFileSync(landing, "utf8");
+    if (/STATUS:\s*TODO/i.test(c) || /<!--\s*fill(\s*:[^-]*)?\s*-->/i.test(c)) {
+      warn("Commercial gate", "LANDING.md open - run `/commercial:landing`");
+    } else {
+      pass("Commercial gate", "LANDING.md ready; /plan-phase unlocked");
+    }
   }
 }
 
@@ -174,15 +212,27 @@ if (bootstrap?.venture?.committed) {
   const totalTokens = tracked.reduce((a, b) => a + b.tokens, 0);
   const detail = `~${totalTokens} tokens across ${tracked.length} files`;
   // Thresholds tuned to this template's inherent complexity (venture gate + dual-agent + mandatoryContext).
-  // PASS < 5000, WARN 5000-7000, FAIL > 7000. Adjust after intentional slim-downs.
+  // PASS < 4000, WARN 4000-6000, FAIL > 6000. Tightened after §3/§4 slim-down in v0.7.0.
   const top3 = () => [...tracked].sort((a, b) => b.tokens - a.tokens).slice(0, 3)
     .map(t => `${t.rel} (~${t.tokens}t)`).join(", ");
-  if (totalTokens < 5000) {
+  if (totalTokens < 4000) {
     pass("Context floor (token-audit)", detail);
-  } else if (totalTokens <= 7000) {
+  } else if (totalTokens <= 6000) {
     warn("Context floor (token-audit)", `${detail} - watch for bloat. Largest: ${top3()}`);
   } else {
     fail("Context floor (token-audit)", `${detail} - floor too heavy. Scope a rule or slim docs. Largest: ${top3()}`);
+  }
+
+  // --verbose-tokens: dump the top-10 so the user can hunt the heaviest files.
+  if (VERBOSE_TOKENS) {
+    console.log("\n[token audit] top 10 loaded-every-session files:");
+    const sorted = [...tracked].sort((a, b) => b.tokens - a.tokens).slice(0, 10);
+    const w = Math.max(...sorted.map(t => t.rel.length));
+    for (const t of sorted) {
+      console.log(`  ${t.rel.padEnd(w)}  ~${String(t.tokens).padStart(5)}t  (${t.bytes} bytes)`);
+    }
+    console.log(`  ${"".padEnd(w)}  ${"-".repeat(8)}`);
+    console.log(`  ${"TOTAL".padEnd(w)}  ~${String(totalTokens).padStart(5)}t\n`);
   }
 }
 
@@ -220,6 +270,19 @@ function nextRecommended() {
     };
     return { surface: "Terminal", mode: "n/a", model: "n/a",
       why: "All VENTURE files filled. Run `npm run commit`." };
+  }
+  // Commercial gate
+  const landing = join(ROOT, ".planning", "COMMERCIAL", "LANDING.md");
+  const landingNeedsWork = !existsSync(landing) ||
+    /STATUS:\s*TODO/i.test(readFileSync(landing, "utf8")) ||
+    /<!--\s*fill(\s*:[^-]*)?\s*-->/i.test(readFileSync(landing, "utf8"));
+  if (landingNeedsWork) {
+    return {
+      surface: "Claude Code CLI",
+      mode: "plan",
+      model: "Claude Sonnet 4.6",
+      why: "Commercial gate: fill LANDING.md before /plan-phase. Run `/commercial:landing`."
+    };
   }
   return {
     surface: "Cursor Plan mode (or Claude CLI plan)",

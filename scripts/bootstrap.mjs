@@ -30,7 +30,7 @@ function die(msg) { console.error(`xx  ${msg}`); process.exit(1); }
 
 function parseArgs(argv) {
   const args = { destination: null, projectName: null, primaryStack: "deferred",
-    database: "deferred", frontend: "deferred", installPlugins: false,
+    database: "deferred", frontend: "deferred", installPlugins: true,
     withFeatureSkeleton: false, nonInteractive: false, force: false };
   const rest = argv.slice(2);
   for (let i = 0; i < rest.length; i++) {
@@ -40,6 +40,7 @@ function parseArgs(argv) {
     else if (a === "--database") args.database = rest[++i];
     else if (a === "--frontend") args.frontend = rest[++i];
     else if (a === "--install-claude-plugins") args.installPlugins = true;
+    else if (a === "--no-install-claude-plugins") args.installPlugins = false;
     else if (a === "--with-feature-skeleton") args.withFeatureSkeleton = true;
     else if (a === "--yes" || a === "-y") args.nonInteractive = true;
     else if (a === "--force") args.force = true;
@@ -62,7 +63,8 @@ Options:
   --primary-stack <stack>        e.g. "React + Vite", "Next.js 15", "Node + Fastify"
   --database <db>                e.g. "Supabase", "Postgres", "SQLite"
   --frontend <fw>                e.g. "Tailwind CSS", "shadcn/ui"
-  --install-claude-plugins       Run 'claude plugins install' for the project
+  --install-claude-plugins       Force plugin install (default: on)
+  --no-install-claude-plugins    Skip plugin install
   --with-feature-skeleton        Create src/modules feature-sliced skeleton
   --yes, -y                      Skip interactive prompts (use defaults)
   --force                        Overwrite existing non-empty destination
@@ -172,6 +174,8 @@ async function main() {
     args.primaryStack = await prompt("Primary stack (type 'deferred' to decide in Phase 1)", "deferred");
     args.database     = await prompt("Database       (type 'deferred' to decide in Phase 1)", "deferred");
     args.frontend     = await prompt("Frontend / UI  (type 'deferred' to decide in Phase 1)", "deferred");
+    const pluginAnswer = await prompt("Install Claude plugins now? (requires claude CLI) [Y/n]", args.installPlugins ? "Y" : "n");
+    args.installPlugins = /^y/i.test(pluginAnswer);
   }
 
   if (!existsSync(destination)) mkdirSync(destination, { recursive: true });
@@ -189,7 +193,7 @@ async function main() {
     "__DATABASE__": args.database,
     "__FRONTEND__": args.frontend,
     "__CURRENT_DATE__": today,
-    "__TEMPLATE_VERSION__": "0.2.0"
+    "__TEMPLATE_VERSION__": "1.0.0"
   };
 
   for (const f of walk(destination)) {
@@ -205,7 +209,7 @@ async function main() {
     data.primaryStack = args.primaryStack;
     data.database = args.database;
     data.frontend = args.frontend;
-    data.templateVersion = "0.2.0";
+    data.templateVersion = "1.0.0";
     writeFileSync(bootstrapMarker, JSON.stringify(data, null, 2) + "\n", "utf8");
   }
 

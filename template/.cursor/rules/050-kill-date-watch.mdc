@@ -1,0 +1,32 @@
+---
+description: Surface a visible kill-date countdown when editing COMMITMENT.md or METRICS.md within 30 days of the deadline.
+globs: [".planning/COMMERCIAL/METRICS.md", ".planning/VENTURE/COMMITMENT.md"]
+---
+
+# Rule 050 - Kill-Date Watch
+
+When the founder opens `.planning/VENTURE/COMMITMENT.md` or `.planning/COMMERCIAL/METRICS.md`, check the `kill_date` from COMMITMENT.md.
+
+## Behaviour
+
+- If `kill_date` is within 30 days of today AND paying customer count in METRICS.md is < 5:
+  - Open the response with: `⚠ Kill-date in <N> days, <C>/10 paying. Consider /commercial:check before editing.`
+  - Do not block edits. This is a visibility rule, not a gate.
+- If `kill_date` has already passed:
+  - Open with: `⚠ Kill-date passed <N> days ago. Either extend via COMMITMENT.md ADR or close the venture.`
+  - Recommend `/commercial:check` to get the formal signal.
+- If `kill_date` > 30 days away OR paying count >= 5:
+  - No warning. Normal behaviour.
+
+## Why a rule and not a hook
+
+Hooks block or allow. This is a soft reminder - the founder needs to be aware but not stopped. The rule injects context into the next agent turn whenever one of these two files is being actively edited.
+
+## Data sources
+
+- `kill_date`: grep `^kill_date:\s*(\S+)` or `^\s*-\s*Kill date:\s*(\S+)` in COMMITMENT.md.
+- Paying count: count rows in METRICS.md "The 10-customer gate" table with a non-empty `Signed` cell.
+
+## Next recommended interaction
+
+When the warning fires, the agent's "Next recommended" footer should point at `/commercial:check` as the next action.

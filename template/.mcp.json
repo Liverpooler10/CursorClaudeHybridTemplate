@@ -11,5 +11,16 @@
       ],
       "description": "Project-scoped filesystem MCP. Root is the project directory; agents cannot climb above it."
     }
+  },
+  "_opt_in_servers": {
+    "fetch": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ],
+      "description": "OPT-IN (move into mcpServers to enable). Web-fetch MCP used by /commercial:competitor-watch. Requires user approval each fetch via .claude/settings.json.permissions.ask. Supply-chain-reviewed before enabling."
+    }
   }
 }

@@ -27,8 +27,10 @@ When all six files below are filled and `npm run commit` passes, the gate opens.
 2. Every claim cites a source. No hallucinated market sizes.
 3. Assumptions are marked `ASSUMPTION:` so they can be attacked later.
 4. Pain before solution. Never start from "I want to build X."
-5. Kill criteria are written BEFORE running experiments, not after.
-6. `COMMITMENT.md` requires a capital-at-risk number and a 90-day kill date. No number, no commit.
+5. Every row in `OPPORTUNITIES.md` must declare `Kind` (Pain / Enjoyment). Troy 1.1: pain beats enjoyment for solo founders; at least 70 % of the shortlist must be Pain.
+6. 10-hour research budget per candidate in `RESEARCH.md`. If you cannot fill the canvas in 10 hours the idea is too vague - split or drop.
+7. Kill criteria are written BEFORE running experiments, not after.
+8. `COMMITMENT.md` requires a capital-at-risk number and a 90-day kill date. No number, no commit.
 
 ## What "done" means for a step
 

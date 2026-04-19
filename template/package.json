@@ -10,6 +10,7 @@
     "bootstrap": "node ./scripts/complete-bootstrap.mjs",
     "commit": "node ./scripts/venture-commit.mjs",
     "doctor": "node ./scripts/doctor.mjs",
+    "next": "node ./scripts/next.mjs",
     "worktree": "node ./scripts/worktree.mjs",
     "prepare": "husky install || true"
   },

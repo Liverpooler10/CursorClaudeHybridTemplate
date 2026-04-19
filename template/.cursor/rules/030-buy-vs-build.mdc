@@ -1,0 +1,34 @@
+---
+description: Buy-before-build for commodity capabilities. Saves weeks of work and keeps the solo founder focused.
+alwaysApply: true
+---
+
+# Rule 030 - Buy vs. Build
+
+A solo founder's time is the tightest resource. For commodity capabilities, a paid tool beats a custom build every single time until scale forces a rebuild.
+
+## The buy list (defaults)
+
+Before generating code for any of the capability classes below, open an ADR titled `buy-vs-build-<capability>.md` under `.planning/adr/` and justify the build path explicitly. Without that ADR, use the default service.
+
+| Capability | Default service(s) | When custom is defensible |
+|---|---|---|
+| CRM | Airtable, Notion, HubSpot Free | Contact volume > 10k AND custom relationship model |
+| Analytics | Plausible, Umami, PostHog Cloud | EU privacy-sensitive AND sub-200ms self-host latency need |
+| Auth | Clerk, Supabase Auth, Auth.js | SSO complexity beyond vendor offering |
+| Payments | Stripe, Paddle, Lemon Squeezy | Non-standard settlement (marketplace split, crypto) |
+| Email | Resend, Loops, Postmark | Millions of sends / month |
+| File storage | Supabase Storage, Cloudflare R2, S3 | Special compliance (HIPAA zero-trust, etc.) |
+| Search | Algolia, Meilisearch Cloud, Typesense Cloud | Custom ranking with proprietary data signals |
+| Forms | Typeform, Tally | Complex conditional logic tied to internal state |
+| Scheduling | Cal.com, SavvyCal | Custom availability engine tied to product |
+
+## Enforcement
+
+- If an agent suggests building one of the above from scratch, ask the user whether an ADR exists.
+- If no ADR exists, refuse the build and propose the relevant default instead.
+- If the user says "I want to build it myself for learning", accept only when `.planning/COMMERCIAL/METRICS.md` shows < 3 paying customers AND the user confirms the learning-over-revenue tradeoff. Log the decision as an ADR either way.
+
+## Rationale
+
+Troy 1.2 + 1.6: speed to 10 paying customers matters more than code ownership. Every hour spent rebuilding commodity infra is an hour not spent on the commercial track.
